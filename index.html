@@ -2,10 +2,57 @@
 <html>
   <head>
     <title>Documentation</title>
+    <script
+      src="https://alcdn.msauth.net/browser/2.0.1/js/msal-browser.min.js"
+      integrity="sha384-fbyYRj8H9iJU/JyncEbzW6WgVOaR5C+PU1dHsRBg2Ag2Q14F4IB8+T8BdknwjRQ8"
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
     <h1>Here's my documentation</h1>
     <p>This is a paragraph.</p>
     <p>This is a test deployment</p>
   </body>
+  <script>
+    function handleResponse(resp) {
+      if (resp !== null) {
+        console.log(resp);
+      } else {
+        // need to call getAccount here?
+        const currentAccounts = msalInstance.getAllAccounts();
+        if (!currentAccounts || currentAccounts.length < 1) {
+          signIn("loginRedirect");
+        } else if (currentAccounts.length > 1) {
+          // Add choose account code here
+        } else if (currentAccounts.length === 1) {
+          username = currentAccounts[0].username;
+          showWelcomeMessage(currentAccounts[0]);
+        }
+      }
+    }
+
+    function signIn() {
+      msalInstance.loginRedirect(msalConfig);
+    }
+
+    const msalConfig = {
+      auth: {
+        clientId: "ca6237d1-c04d-4298-b795-c99555e74bb6",
+        redirectUri: "https://documentationstore.z5.web.core.windows.net/",
+      },
+      cache: {
+        cacheLocation: "sessionStorage",
+        storeAuthStateInCookie: false,
+      },
+    };
+
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+    msalInstance
+      .handleRedirectPromise()
+      .then(handleResponse)
+      .catch((error) => {
+        console.log(error);
+      });
+  </script>
 </html>
